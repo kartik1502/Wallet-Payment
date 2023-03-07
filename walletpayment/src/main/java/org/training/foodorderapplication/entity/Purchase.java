@@ -1,5 +1,7 @@
 package org.training.foodorderapplication.entity;
 
+import java.util.UUID;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,5 +25,5 @@ public class Purchase {
 	@OneToOne
 	private Cart cart;
 	
-	private int walletId;
+	private UUID walletId;
 }
