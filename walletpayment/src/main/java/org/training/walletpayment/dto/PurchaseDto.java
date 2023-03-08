@@ -13,6 +13,6 @@ public class PurchaseDto {
 
 	private int cartId;
 
-	private UUID walletId;
+	private long walletId;
 
 }

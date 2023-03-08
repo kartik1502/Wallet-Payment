@@ -7,6 +7,7 @@ import org.training.walletpayment.entity.Wallet;
 
 public interface WalletService {
 
-	Optional<Wallet> findByWalletId(UUID walletId);
+	Optional<Wallet> findByWalletId(long walletId);
 
+    void save(Wallet wallet);
 }

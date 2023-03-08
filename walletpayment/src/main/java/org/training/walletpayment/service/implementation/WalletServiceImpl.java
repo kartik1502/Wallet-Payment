@@ -16,8 +16,13 @@ public class WalletServiceImpl implements WalletService {
 	private WalletRepository repository;
 
 	@Override
-	public Optional<Wallet> findByWalletId(UUID walletId) {
+	public Optional<Wallet> findByWalletId(long walletId) {
 		return repository.findById(walletId);
+	}
+
+	@Override
+	public void save(Wallet wallet) {
+		repository.save(wallet);
 	}
 
 }

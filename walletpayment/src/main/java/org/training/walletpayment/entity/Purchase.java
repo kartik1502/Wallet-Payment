@@ -25,5 +25,5 @@ public class Purchase {
 	@OneToOne
 	private Cart cart;
 	
-	private UUID walletId;
+	private long walletId;
 }

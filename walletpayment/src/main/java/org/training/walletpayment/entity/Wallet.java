@@ -15,9 +15,7 @@ import lombok.Data;
 public class Wallet {
 
 	@Id
-	@GeneratedValue
-	@Column(columnDefinition = "BINARY(8)")
-	private UUID walletId;
+	private long walletId;
 
 	private double balance;
 
