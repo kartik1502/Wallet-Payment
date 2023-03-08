@@ -71,4 +71,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(new ErrorResponse(404l, errorMessage), HttpStatus.NOT_FOUND);
 	}
 
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<Object> handleNoSuchFoodExistsException(UserNotFoundException ex, WebRequest req) {
+		List<String> errors = new ArrayList<>();
+		errors.add(ex.getLocalizedMessage());
+		return new ResponseEntity<>(new ErrorResponse(404l, errors), HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(ProductNotFoundException.class)
+	public ResponseEntity<Object> handleNoSuchFoodExistsException(ProductNotFoundException ex, WebRequest req) {
+		List<String> errors = new ArrayList<>();
+		errors.add(ex.getLocalizedMessage());
+		return new ResponseEntity<>(new ErrorResponse(404l, errors), HttpStatus.NOT_FOUND);
+	}
+
 }
