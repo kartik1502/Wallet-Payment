@@ -1,6 +1,7 @@
 package org.training.walletpayment.service.implementation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -64,4 +65,23 @@ public class ProductServiceImplTest {
 	            () -> productService.findByProductNameContaining(productName, page, pagesize));
 	    assertEquals("Product with product name doesn't exists", exception.getMessage());
 	  }
+
+	  void testGetAllProducts() {
+		List<Product> productList = new ArrayList<>();
+		Product product = new Product();
+		product.setProductId(1);
+		product.setProductName("soap");
+		product.setPrice(10.0);
+		product.setAvaliableQuantity(2);
+		productList.add(product);
+
+		when(productRepository.findAll()).thenReturn(productList);
+
+		List<Product> result = productService.getAllProducts();
+
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		assertEquals(productList, result);
+	}
+
 	}
