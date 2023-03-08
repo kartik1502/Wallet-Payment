@@ -1,0 +1,10 @@
+Wallet payment
+--------------
+1. Search for products - Partial name search (Pagination)
+2. Add products to cart - qty, price, userid
+3. Make the payment through wallet - cart-wallet-user, validity date, prefilled pay points
+4. View all purchase for user - Pagination & monthly
+
+Time Line:
+Design - 1 PM - 2:30 PM
+Development - 2:30 - 5 PM Wednesday: 10:30 - 12:30 PM
