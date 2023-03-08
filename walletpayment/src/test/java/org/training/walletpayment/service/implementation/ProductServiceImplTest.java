@@ -11,13 +11,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.training.walletpayment.dto.ProductDto;
 import org.training.walletpayment.entity.Product;
+import org.training.walletpayment.exception.NoSuchProductExist;
 import org.training.walletpayment.repository.ProductRepository;
 
 @ExtendWith(SpringExtension.class)
-class ProductServiceImplTest {
-
+public class ProductServiceImplTest {
 	@Mock
 	private ProductRepository productRepository;
 
@@ -25,7 +29,44 @@ class ProductServiceImplTest {
 	private ProductServiceImpl productService;
 
 	@Test
-	void testGetAllProducts() {
+	  void testFindByProductNameContaining() {
+	    String productName = "Apple";
+	    int page = 0;
+	    int pagesize = 10;
+
+	    List<Product> productList = new ArrayList<>();
+	    Product product = new Product();
+	    product.setProductId(1);
+	    product.setProductName("Apple");
+	    productList.add(product);
+
+	    Pageable pageable = PageRequest.of(page, pagesize);
+	    when(productRepository.findByProductNameContainingIgnoreCase(productName, pageable))
+	        .thenReturn(new PageImpl<>(productList));
+
+	    List<ProductDto> productDtoList = productService.findByProductNameContaining(productName, page, pagesize);
+
+	    assertEquals(1, productDtoList.size());
+	    assertEquals("Apple", productDtoList.get(0).getProductName());
+	  }
+
+	  @Test
+	  void testFindByProductNameContainingNoResults() {
+	    String productName = "Banana";
+	    int page = 0;
+	    int pagesize = 10;
+
+	    Pageable pageable = PageRequest.of(page, pagesize);
+	    when(productRepository.findByProductNameContainingIgnoreCase(productName, pageable))
+	        .thenReturn(new PageImpl<>(new ArrayList<>()));
+
+	    NoSuchProductExist exception =
+	        org.junit.jupiter.api.Assertions.assertThrows(NoSuchProductExist.class,
+	            () -> productService.findByProductNameContaining(productName, page, pagesize));
+	    assertEquals("Product with product name doesn't exists", exception.getMessage());
+	  }
+
+	  void testGetAllProducts() {
 		List<Product> productList = new ArrayList<>();
 		Product product = new Product();
 		product.setProductId(1);
@@ -43,4 +84,4 @@ class ProductServiceImplTest {
 		assertEquals(productList, result);
 	}
 
-}
+	}

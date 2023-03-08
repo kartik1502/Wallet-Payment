@@ -13,20 +13,37 @@ import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    @Autowired
-    private ProductRepository repository;
-    
-    Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
-    
-    @Override
-    public List<Product> getAllProducts() {
-        return repository.findAll();
-    }
+	@Autowired
+	private ProductRepository repository;
 
-    @Override
-    public void saveAll(List<Product> productList) {
-        repository.saveAll(productList);
-    }
-	
+	Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Override
+	public List<Product> getAllProducts() {
+		return repository.findAll();
+	}
+
+	@Override
+	public void saveAll(List<Product> productList) {
+		repository.saveAll(productList);
+	}
+
+	@Override
+	public List<ProductDto> findByProductNameContaining(String productName, int page, int pagesize) {
+
+		List<ProductDto> dtos = new ArrayList<>();
+		Pageable pageable = PageRequest.of(page, pagesize);
+		productRepository.findByProductNameContainingIgnoreCase(productName, pageable).forEach(p -> {
+			ProductDto dto = new ProductDto();
+			BeanUtils.copyProperties(p, dto, "productId");
+			dtos.add(dto);
+		});
+
+		if (dtos.isEmpty()) {
+			logger.error("No such Product exists exception handled");
+			throw new NoSuchProductExist("Product with product name doesn't exists");
+		}
+		return dtos;
+	}
+
 }
-
