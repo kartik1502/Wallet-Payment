@@ -2,7 +2,11 @@ package org.training.walletpayment.exception;
 
 public class InSufficientBalance extends RuntimeException {
 
-    private final String message;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final String message;
 
     public InSufficientBalance() {
         this.message = "";

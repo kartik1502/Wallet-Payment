@@ -70,4 +70,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorMessage.add(ex.getLocalizedMessage());
 		return new ResponseEntity<>(new ErrorResponse(404l, errorMessage), HttpStatus.NOT_FOUND);
 	}
+
 }
