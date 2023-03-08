@@ -1,117 +1,207 @@
 package org.training.walletpayment.service.implementation;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyDouble;
-import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.training.walletpayment.dto.PurchaseDto;
+import org.training.walletpayment.dto.ResponseDto;
+import org.training.walletpayment.entity.Cart;
+import org.training.walletpayment.entity.Product;
+import org.training.walletpayment.entity.ProductQuantity;
+import org.training.walletpayment.entity.User;
 import org.training.walletpayment.entity.Wallet;
+import org.training.walletpayment.exception.NoSuchCartExists;
+import org.training.walletpayment.exception.NoSuchUserExists;
 import org.training.walletpayment.exception.NoSuchWalletExists;
+import org.training.walletpayment.exception.QuantityExceededException;
+import org.training.walletpayment.exception.WalletExpired;
 import org.training.walletpayment.repository.PurchaseRepository;
 import org.training.walletpayment.service.CartService;
 import org.training.walletpayment.service.ProductService;
 import org.training.walletpayment.service.UserService;
 import org.training.walletpayment.service.WalletService;
 
-@ContextConfiguration(classes = {PurchaseServiceImpl.class})
 @ExtendWith(SpringExtension.class)
-class PurchaseServiceImplTest {
-    @MockBean
-    private CartService cartService;
+ class PurchaseServiceImplTest {
+	
+	@InjectMocks
+    private PurchaseServiceImpl purchaseService;
 
-    @MockBean
-    private ProductService productService;
-
-    @MockBean
-    private PurchaseRepository purchaseRepository;
-
-    @Autowired
-    private PurchaseServiceImpl purchaseServiceImpl;
-
-    @MockBean
+    @Mock
     private UserService userService;
 
-    @MockBean
+    @Mock
+    private CartService cartService;
+
+    @Mock
     private WalletService walletService;
 
-    /**
-     * Method under test: {@link PurchaseServiceImpl#purchase(int, PurchaseDto)}
-     */
+    @Mock
+    private ProductService productService;
+
+    @Mock
+    private PurchaseRepository repository;
+	
     @Test
-    void testPurchase() {
-        Wallet wallet = mock(Wallet.class);
-        when(wallet.getValidTill()).thenReturn(null);
-        doNothing().when(wallet).setBalance(anyDouble());
-        doNothing().when(wallet).setValidFromDate((LocalDate) any());
-        doNothing().when(wallet).setValidTill((LocalDate) any());
-        doNothing().when(wallet).setWalletId(anyLong());
-        wallet.setBalance(10.0d);
-        wallet.setValidFromDate(LocalDate.ofEpochDay(1L));
-        wallet.setValidTill(LocalDate.ofEpochDay(1L));
-        wallet.setWalletId(1L);
-        Optional<Wallet> ofResult = Optional.of(wallet);
-        when(walletService.findByWalletId(anyLong())).thenReturn(ofResult);
-        purchaseServiceImpl.purchase(1, new PurchaseDto(1, 1L));
+     void testWalletExpired() {
+        int userId = 1;
+        PurchaseDto purchaseDto = new PurchaseDto();
+        purchaseDto.setWalletId(123);
+
+        Wallet wallet = new Wallet();
+        wallet.setWalletId(123);
+        
+        User user = new User();
+        user.setUserId(1);
+        wallet.setValidTill(LocalDate.now().minusDays(1));
+        when(walletService.findByWalletId(123)).thenReturn(Optional.of(wallet));
+
+        assertThrows(WalletExpired.class, () -> {
+            purchaseService.purchase(userId, purchaseDto);
+        });
     }
-
-    /**
-     * Method under test: {@link PurchaseServiceImpl#purchase(int, PurchaseDto)}
-     */
+    
     @Test
-    void testPurchase2() {
-        when(walletService.findByWalletId(anyLong())).thenReturn(Optional.empty());
-        Wallet wallet = mock(Wallet.class);
-        when(wallet.getValidTill()).thenReturn(LocalDate.ofEpochDay(1L));
-        doNothing().when(wallet).setBalance(anyDouble());
-        doNothing().when(wallet).setValidFromDate((LocalDate) any());
-        doNothing().when(wallet).setValidTill((LocalDate) any());
-        doNothing().when(wallet).setWalletId(anyLong());
-        wallet.setBalance(10.0d);
-        wallet.setValidFromDate(LocalDate.ofEpochDay(1L));
-        wallet.setValidTill(LocalDate.ofEpochDay(1L));
-        wallet.setWalletId(1L);
-        assertThrows(NoSuchWalletExists.class, () -> purchaseServiceImpl.purchase(1, new PurchaseDto(1, 1L)));
-        verify(walletService).findByWalletId(anyLong());
-        verify(wallet).setBalance(anyDouble());
-        verify(wallet).setValidFromDate((LocalDate) any());
-        verify(wallet).setValidTill((LocalDate) any());
-        verify(wallet).setWalletId(anyLong());
+     void testNoSuchWalletExists() {
+        int userId = 1;
+        PurchaseDto purchaseDto = new PurchaseDto();
+        purchaseDto.setWalletId(123);
+
+        when(walletService.findByWalletId(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchWalletExists.class, () -> {
+            purchaseService.purchase(userId, purchaseDto);
+        });
     }
-
-    /**
-     * Method under test: {@link PurchaseServiceImpl#purchase(int, PurchaseDto)}
-     */
+    
     @Test
-    void testPurchase3() {
+     void testNoSuchUserExists() {
+        int userId = 1;
+        PurchaseDto purchaseDto = new PurchaseDto();
+        purchaseDto.setWalletId(123);
+        purchaseDto.setCartId(456);
 
-        Wallet wallet = mock(Wallet.class);
-        when(wallet.getValidTill()).thenReturn(LocalDate.ofEpochDay(1L));
-        doNothing().when(wallet).setBalance(anyDouble());
-        doNothing().when(wallet).setValidFromDate((LocalDate) any());
-        doNothing().when(wallet).setValidTill((LocalDate) any());
-        doNothing().when(wallet).setWalletId(anyLong());
-        wallet.setBalance(10.0d);
-        wallet.setValidFromDate(LocalDate.ofEpochDay(1L));
-        wallet.setValidTill(LocalDate.ofEpochDay(1L));
-        wallet.setWalletId(1L);
-        Optional<Wallet> ofResult = Optional.of(wallet);
-        when(walletService.findByWalletId(anyLong())).thenReturn(ofResult);
-        purchaseServiceImpl.purchase(1, null);
+        Wallet wallet = new Wallet();
+        wallet.setWalletId(123);
+        wallet.setValidTill(LocalDate.now().plusDays(1));
+        when(walletService.findByWalletId(123)).thenReturn(Optional.of(wallet));
+        when(userService.findUserByUserIdAndWallets(anyInt(), Mockito.any())).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchUserExists.class, () -> {
+            purchaseService.purchase(userId, purchaseDto);
+        });
+    }
+    
+    @Test
+     void testNoSuchCartExists() {
+        int userId = 1;
+        PurchaseDto purchaseDto = new PurchaseDto();
+        purchaseDto.setWalletId(123);
+        purchaseDto.setCartId(456);
+
+        Wallet wallet = new Wallet();
+        wallet.setWalletId(123);
+        wallet.setValidTill(LocalDate.now().plusDays(1));        
+        User user = new User();
+        when(walletService.findByWalletId(123)).thenReturn(Optional.of(wallet));
+        when(userService.findUserByUserIdAndWallets(anyInt(), Mockito.any())).thenReturn(Optional.of(user));
+        when(cartService.findCartByCartIdAndAndUser(anyInt(), Mockito.any())).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchCartExists.class, () -> {
+            purchaseService.purchase(userId, purchaseDto);
+        });
+    }
+    
+    @Test
+     void testPurchase_QuantityExceededException() {
+        int userId = 1;
+        PurchaseDto purchaseDto = new PurchaseDto();
+        purchaseDto.setCartId(1);
+        purchaseDto.setWalletId(1);
+
+        Wallet wallet = new Wallet();
+        wallet.setValidTill(LocalDate.now().plusMonths(1));
+        wallet.setBalance(5000.0);
+        when(walletService.findByWalletId(1)).thenReturn(java.util.Optional.of(wallet));
+
+        User user = new User();
+        user.setUserId(userId);
+        when(userService.findUserByUserIdAndWallets(userId, wallet)).thenReturn(java.util.Optional.of(user));
+
+        Cart cart = new Cart();
+        cart.setCartId(1);
+        List<ProductQuantity> productQuantities = new ArrayList<>();
+        productQuantities.add(new ProductQuantity(1, 10));
+        cart.setProductQuantities(productQuantities);
+        when(cartService.findCartByCartIdAndAndUser(1, user)).thenReturn(java.util.Optional.of(cart));
+
+        Product product = new Product();
+        product.setProductId(1);
+        product.setAvaliableQuantity(5);
+        product.setPrice(500.0);
+        List<Product> products = new ArrayList<>();
+        products.add(product);
+        when(productService.getAllProducts()).thenReturn(products);
+
+        assertThrows(QuantityExceededException.class, () -> {
+            purchaseService.purchase(userId, purchaseDto);
+        });
+    }
+    
+    @Test
+     void testPurchaseWithValidData() {
+        // Arrange
+        PurchaseDto purchaseDto = new PurchaseDto();
+        purchaseDto.setCartId(1);
+        purchaseDto.setWalletId(1);
+        Cart cart = new Cart();
+        cart.setCartId(1);
+        List<ProductQuantity> productQuantities = new ArrayList<>();
+        productQuantities.add(new ProductQuantity(1, 2));
+        cart.setProductQuantities(productQuantities);
+        User user = new User();
+        user.setUserId(1);
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setEmailId("john.doe@example.com");
+        Wallet wallet = new Wallet();
+        wallet.setWalletId(1);
+        wallet.setBalance(1000.0);
+        wallet.setValidTill(LocalDate.now().plusMonths(1));
+        List<Product> products = new ArrayList<>();
+        Product product = new Product();
+        product.setProductId(1);
+        product.setProductName("Product 1");
+        product.setPrice(100.0);
+        product.setAvaliableQuantity(5);
+        products.add(product);
+        productService.saveAll(products);
+        when(productService.getAllProducts()).thenReturn(products);
+        when(walletService.findByWalletId(1)).thenReturn(Optional.of(wallet));
+        when(userService.findUserByUserIdAndWallets(1, wallet)).thenReturn(Optional.of(user));
+        when(cartService.findCartByCartIdAndAndUser(1, user)).thenReturn(Optional.of(cart));
+        ResponseDto responseDto = purchaseService.purchase(1, purchaseDto);
+        assertNotNull(responseDto);
+        assertEquals(200, responseDto.getReaponseCode());
+        assertEquals(1, responseDto.getResponseMessage().size());
+        assertEquals("Purchase Done Successfully", responseDto.getResponseMessage().get(0));
+       
     }
 }
+
+
 

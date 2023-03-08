@@ -1,7 +1,6 @@
 package org.training.walletpayment.service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.training.walletpayment.entity.Wallet;
 

@@ -8,4 +8,5 @@ import org.training.walletpayment.entity.User;
 public interface CartService {
 
     Optional<Cart> findCartByCartIdAndAndUser(int cartId, User user);
+
 }

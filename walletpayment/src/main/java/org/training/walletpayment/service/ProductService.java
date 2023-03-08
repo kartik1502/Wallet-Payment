@@ -1,9 +1,8 @@
 package org.training.walletpayment.service;
 
-import org.training.walletpayment.entity.Product;
-
 import java.util.List;
-import java.util.Map;
+
+import org.training.walletpayment.entity.Product;
 
 public interface ProductService {
     List<Product> getAllProducts();
