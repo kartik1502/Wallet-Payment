@@ -1,7 +1,5 @@
 package org.training.walletpayment.dto;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseDto {
+public class PurchaseDto {
 
-	private long reaponseCode;
-	
-	private List<String> responseMessage;
+	private int cartId;
+
+	private long walletId;
+
 }

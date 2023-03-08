@@ -1,6 +1,7 @@
 package org.training.walletpayment.service.implementation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +29,9 @@ import org.training.walletpayment.service.UserService;
 @Service
 public class CartServiceImpl implements CartService {
 
+	@Autowired
+	private CartRepository repository;
+	
 	@Autowired
 	private UserService userService;
 
@@ -64,7 +68,12 @@ public class CartServiceImpl implements CartService {
 		cart.setProductQuantities(productQuantities);
 		cartRepository.save(cart);
 		logger.info("Cart added successfully");
-		return new ResponseDto(201l, "Cart saved successfully");
+		return new ResponseDto(201l, Arrays.asList("Cart saved successfully"));
+	}
+	
+	@Override
+	public Optional<Cart> findCartByCartIdAndAndUser(int cartId, User user) {
+		return repository.findCartByCartIdAndAndUser(cartId, user);
 	}
 
 }

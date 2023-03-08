@@ -2,19 +2,16 @@ package org.training.walletpayment.exception;
 
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ErrorResponse {
 
-	long errorcode;
-	List<String> errorMessage;
-
-	public ErrorResponse(long errorcode, List<String> errorMessage) {
-		super();
-		this.errorcode = errorcode;
-		this.errorMessage = errorMessage;
-	}
+	private long errorCode;
+	
+	private List<String> errorResponses;
 }

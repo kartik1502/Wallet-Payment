@@ -1,0 +1,1 @@
+mvn clean verify sonar:sonar -Dsonar.projectKey=walletpayment -Dsonar.host.url=http://localhost:9000 -Dsonar.login=sqp_4271545fc5f97beaf0c5c7bcde361360fde63af8
