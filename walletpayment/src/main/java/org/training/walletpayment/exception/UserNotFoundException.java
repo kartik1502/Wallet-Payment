@@ -1,24 +1,24 @@
 package org.training.walletpayment.exception;
 
-public class UserNotFoundException extends RuntimeException{
+public class UserNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
-
-	private String message;
+	private final String message;
 
 	public UserNotFoundException(String message) {
 		super(message);
+		this.message = message;
 	}
 
-	public UserNotFoundException()  {
+	public UserNotFoundException() {
 		super();
+		this.message = "";
 	}
 
+	@Override
 	public String getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+	
 }

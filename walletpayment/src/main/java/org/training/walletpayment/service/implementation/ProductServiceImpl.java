@@ -9,14 +9,13 @@ import org.training.walletpayment.repository.ProductRepository;
 import org.training.walletpayment.service.ProductService;
 
 @Service
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private ProductRepository productRepository;
-	
-	public  List<Product> getAllProducts()
-	{
+
+	public List<Product> getAllProducts() {
 		return productRepository.findAll();
 	}
-	
+
 }

@@ -9,16 +9,13 @@ import org.training.walletpayment.repository.UserRepository;
 import org.training.walletpayment.service.UserService;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
-	
 	@Autowired
 	private UserRepository userRepository;
-	
-	
-	public Optional<User> findByUserId(int userId)
-	{
+
+	public Optional<User> findByUserId(int userId) {
 		return userRepository.findById(userId);
 	}
-	
+
 }

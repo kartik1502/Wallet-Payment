@@ -1,24 +1,23 @@
 package org.training.walletpayment.exception;
 
-public class ProductNotFoundException  extends RuntimeException{
+public class ProductNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
-
-	private String message;
+	private final  String message;
 
 	public ProductNotFoundException(String message) {
 		super(message);
+		this.message = message;
 	}
 
-	public ProductNotFoundException()  {
+	public ProductNotFoundException() {
 		super();
+		this.message = "";
 	}
 
+	@Override
 	public String getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
 }
