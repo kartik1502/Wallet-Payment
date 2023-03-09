@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -36,14 +37,14 @@ class CartControllerTest {
 		productQuantityDtos.add(productQuantityDto);
 
 		ResponseDto responseDto = new ResponseDto();
-		responseDto.setMessage("Cart added successfully");
+		responseDto.setResponseMessage(Arrays.asList("Cart added successfully"));
 
 		when(cartService.save(userId, productQuantityDtos)).thenReturn(responseDto);
 
 		ResponseEntity<ResponseDto> responseEntity = cartController.addCart(userId, productQuantityDtos);
 
 		assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-		assertEquals("Cart added successfully", responseEntity.getBody().getMessage());
+		assertEquals("Cart added successfully", responseEntity.getBody().getResponseMessage().get(0));
 	}
 
 }
