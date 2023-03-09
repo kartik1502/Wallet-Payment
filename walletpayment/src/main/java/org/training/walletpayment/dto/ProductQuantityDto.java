@@ -12,5 +12,7 @@ public class ProductQuantityDto {
 	private int productId;
 
 	private int quantity;
+	
+	
 
 }

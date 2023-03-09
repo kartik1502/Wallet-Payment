@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.training.walletpayment.entity.User;
-import org.training.walletpayment.entity.Wallet;
 import org.training.walletpayment.repository.UserRepository;
 
 @ExtendWith(SpringExtension.class)
@@ -25,30 +25,19 @@ class UserServiceImplTest {
 	private UserServiceImpl userService;
 
 	@Test
-	void testFindByUserId() {
+	void testFindByuserId() {
 
-		User expectedUser = new User();
-		expectedUser.setUserId(1);
-		when(userRepository.findById(1)).thenReturn(Optional.of(expectedUser));
+		User user = new User();
+		user.setUserId(1);
+		user.setFirstName("divya");
+		user.setLastName("shree");
+		user.setEmailId("divya@gmail.com");
+		when(userRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(user));
 
-		Optional<User> actualUser = userService.findByUserId(1);
+		Optional<User> result = userService.findByUserId(1);
 
-		assertTrue(actualUser.isPresent());
-		assertEquals(expectedUser, actualUser.get());
-	}
-
-	@Test
-	void testFindUserByUserIdAndWallets() {
-
-		User expectedUser = new User();
-		expectedUser.setUserId(1);
-		Wallet wallet = new Wallet();
-		when(userRepository.findUserByUserIdAndWallets(1, wallet)).thenReturn(Optional.of(expectedUser));
-
-		Optional<User> actualUser = userService.findUserByUserIdAndWallets(1, wallet);
-
-		assertTrue(actualUser.isPresent());
-		assertEquals(expectedUser, actualUser.get());
+		assertTrue(result.isPresent());
+		assertEquals(user, result.get());
 	}
 
 }

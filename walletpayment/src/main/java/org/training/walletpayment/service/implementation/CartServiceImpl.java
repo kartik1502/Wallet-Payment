@@ -19,18 +19,16 @@ import org.training.walletpayment.entity.Cart;
 import org.training.walletpayment.entity.Product;
 import org.training.walletpayment.entity.ProductQuantity;
 import org.training.walletpayment.entity.User;
-import org.training.walletpayment.exception.NoSuchUserExists;
 import org.training.walletpayment.exception.ProductNotFoundException;
+import org.training.walletpayment.exception.UserNotFoundException;
 import org.training.walletpayment.repository.CartRepository;
 import org.training.walletpayment.service.CartService;
+import org.training.walletpayment.service.ProductQuantityService;
 import org.training.walletpayment.service.ProductService;
 import org.training.walletpayment.service.UserService;
 
 @Service
 public class CartServiceImpl implements CartService {
-
-	@Autowired
-	private CartRepository repository;
 
 	@Autowired
 	private UserService userService;
@@ -41,24 +39,23 @@ public class CartServiceImpl implements CartService {
 	@Autowired
 	private CartRepository cartRepository;
 
-	Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
+	@Autowired
+	private ProductQuantityService productQuantityService;
 
-	@Override
-	public Optional<Cart> findCartByCartIdAndAndUser(int cartId, User user) {
-		return repository.findCartByCartIdAndAndUser(cartId, user);
-	}
+	Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
 
 	@Override
 	public ResponseDto save(int userId, List<ProductQuantityDto> productquantitydto) {
 
-		Cart cart = new Cart();
 		List<ProductQuantity> productQuantities = new ArrayList<>();
 		Optional<User> user = userService.findByUserId(userId);
 		if (user.isEmpty()) {
 			logger.error("No Such User Found Exception is thrown");
-			throw new NoSuchUserExists("User with user Id:" + userId + " does not exists");
+			throw new UserNotFoundException("User with user Id:" + userId + " does not exists");
 		}
+		Cart cart = new Cart();
 		cart.setUser(user.get());
+
 		List<String> responses = new ArrayList<>();
 		Map<Integer, Product> productMap = productService.getAllProducts().stream()
 				.collect(Collectors.toMap(Product::getProductId, Function.identity()));
@@ -79,10 +76,10 @@ public class CartServiceImpl implements CartService {
 			return new ResponseDto(200l, Arrays.asList("Quantity should be at least 1"));
 		}
 
-		cart.setProductQuantities(productQuantities);
-		cartRepository.save(cart);
-		logger.info("Cart added successfully");
-		return new ResponseDto(201l, Arrays.asList("Cart saved successfully"));
+		Cart cart1 = cartRepository.save(cart);
+		productQuantities.forEach(p -> p.setCart(cart1));
+		productQuantityService.saveAll(productQuantities);
+		logger.info("Products  added to Cart  successfully");
+		return new ResponseDto(201l, Arrays.asList("Products added to Cart successfully"));
 	}
-
 }
