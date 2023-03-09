@@ -37,14 +37,18 @@ class CartControllerTest {
 		productQuantityDtos.add(productQuantityDto);
 
 		ResponseDto responseDto = new ResponseDto();
+
 		responseDto.setResponseMessage(Arrays.asList("Products added to cart successfully"));
+
 
 		when(cartService.save(userId, productQuantityDtos)).thenReturn(responseDto);
 
 		ResponseEntity<ResponseDto> responseEntity = cartController.addCart(userId, productQuantityDtos);
 
 		assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+
 		assertEquals("Products added to cart successfully", responseEntity.getBody().getResponseMessage().get(0));
+
 	}
 
 }
