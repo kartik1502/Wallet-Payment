@@ -1,5 +1,4 @@
 package org.training.walletpayment.controller;
-
 import java.util.List;
 
 import javax.validation.constraints.Size;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.training.walletpayment.dto.ProductDto;
-import org.training.walletpayment.repository.ProductRepository;
 import org.training.walletpayment.service.ProductService;
 
 
@@ -23,8 +21,6 @@ public class ProductController {
 	@Autowired
     private ProductService service;
 	
-	@Autowired
-	private ProductRepository productRepository;
 	
 	@GetMapping("/products")
 	public ResponseEntity<List<ProductDto>> getALL(@RequestParam @Size(min=3) String productName,@RequestParam int page, @RequestParam int pageSize){

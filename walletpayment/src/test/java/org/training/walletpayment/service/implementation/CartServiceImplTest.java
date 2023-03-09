@@ -18,8 +18,8 @@ import org.training.walletpayment.dto.ResponseDto;
 import org.training.walletpayment.entity.Cart;
 import org.training.walletpayment.entity.Product;
 import org.training.walletpayment.entity.User;
+import org.training.walletpayment.exception.NoSuchUserExists;
 import org.training.walletpayment.exception.ProductNotFoundException;
-import org.training.walletpayment.exception.UserNotFoundException;
 import org.training.walletpayment.repository.CartRepository;
 import org.training.walletpayment.service.ProductService;
 import org.training.walletpayment.service.UserService;
@@ -68,8 +68,8 @@ class CartServiceImplTest {
 
 		ResponseDto responseDto = cartService.save(userId, productQuantityDtos);
 
-		assertEquals(201l, responseDto.getResponseCode());
-		assertEquals("Cart saved successfully", responseDto.getMessage());
+		assertEquals(201l, responseDto.getReaponseCode());
+		assertEquals("Cart saved successfully", responseDto.getResponseMessage().get(0));
 	}
 
 	@Test
@@ -79,7 +79,7 @@ class CartServiceImplTest {
 
 		Mockito.when(userService.findByUserId(userId)).thenReturn(Optional.empty());
 
-		UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
+		NoSuchUserExists exception = assertThrows(NoSuchUserExists.class, () -> {
 			cartService.save(userId, productQuantityDtos);
 		});
 

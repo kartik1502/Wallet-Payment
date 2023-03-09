@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-	
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -71,12 +70,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorMessage.add(ex.getLocalizedMessage());
 		return new ResponseEntity<>(new ErrorResponse(404l, errorMessage), HttpStatus.NOT_FOUND);
 	}
-
+	
 	@ExceptionHandler(ProductNotFoundException.class)
-	public ResponseEntity<Object> handleNoSuchFoodExistsException(ProductNotFoundException ex, WebRequest req) {
-		List<String> errors = new ArrayList<>();
-		errors.add(ex.getLocalizedMessage());
-		return new ResponseEntity<>(new ErrorResponse(404l, errors), HttpStatus.NOT_FOUND);
+	public ResponseEntity<Object> handleProductNotFoundException(ProductNotFoundException ex, WebRequest request){
+		List<String> errorMessage = new ArrayList<>();
+		errorMessage.add(ex.getLocalizedMessage());
+		return new ResponseEntity<>(new ErrorResponse(404l, errorMessage), HttpStatus.NOT_FOUND);
 	}
-
 }
