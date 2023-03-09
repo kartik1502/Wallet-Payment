@@ -2,6 +2,9 @@ package org.training.walletpayment.service;
 
 import java.util.List;
 
+import javax.validation.constraints.Size;
+
+import org.training.walletpayment.dto.ProductDto;
 import org.training.walletpayment.entity.Product;
 
 public interface ProductService {
@@ -9,5 +12,5 @@ public interface ProductService {
 
     void saveAll(List<Product> productList);
 
-    List<ProductDto> findByProductNameContaining(String productName, int page, int pagesize);
+	List<ProductDto> findByProductNameContaining(@Size(min = 3) String productName, int page, int pageSize);
 }

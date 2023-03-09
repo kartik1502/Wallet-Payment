@@ -9,6 +9,4 @@ import org.training.walletpayment.entity.Wallet;
 public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findUserByUserIdAndWallets(int user, Wallet wallets);
-
-    Optional<User> findByUserId(int userId);
 }

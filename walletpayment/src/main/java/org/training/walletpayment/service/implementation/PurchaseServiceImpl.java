@@ -67,9 +67,6 @@ public class PurchaseServiceImpl implements PurchaseService {
 				.orElseThrow(() -> new NoSuchCartExists("Cart with cart Id:" + purchaseDto.getCartId()
 						+ " dose not belongs to user with user Id:" + userId));
 
-		if(cart.getTotalPrice() > 0){
-			return new ResponseDto(200, Arrays.asList("Cart has been already purchased"));
-		}
 		Purchase purchase = new Purchase();
 		purchase.setUser(user);
 		purchase.setWalletId(purchaseDto.getWalletId());
