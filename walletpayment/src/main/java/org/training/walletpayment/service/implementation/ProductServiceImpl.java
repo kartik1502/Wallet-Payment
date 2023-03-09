@@ -22,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository repository;
     
-    Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
+    Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Override
     public List<Product> getAllProducts() {

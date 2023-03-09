@@ -21,6 +21,7 @@ import org.training.walletpayment.entity.User;
 import org.training.walletpayment.exception.NoSuchUserExists;
 import org.training.walletpayment.exception.ProductNotFoundException;
 import org.training.walletpayment.repository.CartRepository;
+import org.training.walletpayment.service.ProductQuantityService;
 import org.training.walletpayment.service.ProductService;
 import org.training.walletpayment.service.UserService;
 
@@ -38,6 +39,9 @@ class CartServiceImplTest {
 
 	@Mock
 	private CartRepository cartRepository;
+	
+	@Mock
+	private ProductQuantityService productQuantityService;
 
 	@Test
 	void testSaveWithValidData() {
@@ -85,7 +89,7 @@ class CartServiceImplTest {
 
 		assertEquals("User with user Id:1 does not exists", exception.getMessage());
 	}
-
+	
 	@Test
 	void testSaveWithInvalidProduct() {
 		int userId = 1;

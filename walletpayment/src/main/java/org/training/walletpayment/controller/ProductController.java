@@ -25,7 +25,7 @@ public class ProductController {
 	@GetMapping("/products")
 	public ResponseEntity<List<ProductDto>> getALL(@RequestParam @Size(min=3) String productName,@RequestParam int page, @RequestParam int pageSize){
 		
-		return new ResponseEntity<List<ProductDto>>(service.findByProductNameContaining(productName, page, pageSize), HttpStatus.OK);
+		return new ResponseEntity<>(service.findByProductNameContaining(productName, page, pageSize), HttpStatus.OK);
 
 	}
 }

@@ -23,6 +23,7 @@ import org.training.walletpayment.exception.NoSuchUserExists;
 import org.training.walletpayment.exception.ProductNotFoundException;
 import org.training.walletpayment.repository.CartRepository;
 import org.training.walletpayment.service.CartService;
+import org.training.walletpayment.service.ProductQuantityService;
 import org.training.walletpayment.service.ProductService;
 import org.training.walletpayment.service.UserService;
 
@@ -37,6 +38,9 @@ public class CartServiceImpl implements CartService {
 
 	@Autowired
 	private ProductService productService;
+	
+	@Autowired
+	private ProductQuantityService productQuantityService;
 
 	@Autowired
 	private CartRepository cartRepository;
@@ -51,14 +55,15 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public ResponseDto save(int userId, List<ProductQuantityDto> productquantitydto) {
 
-		Cart cart = new Cart();
 		List<ProductQuantity> productQuantities = new ArrayList<>();
 		Optional<User> user = userService.findByUserId(userId);
 		if (user.isEmpty()) {
 			logger.error("No Such User Found Exception is thrown");
 			throw new NoSuchUserExists("User with user Id:" + userId + " does not exists");
 		}
+		Cart cart = new Cart();
 		cart.setUser(user.get());
+		
 		List<String> responses = new ArrayList<>();
 		Map<Integer, Product> productMap = productService.getAllProducts().stream()
 				.collect(Collectors.toMap(Product::getProductId, Function.identity()));
@@ -78,9 +83,12 @@ public class CartServiceImpl implements CartService {
 		if (!responses.isEmpty()) {
 			return new ResponseDto(200l, Arrays.asList("Quantity should be at least 1"));
 		}
-
-		cart.setProductQuantities(productQuantities);
-		cartRepository.save(cart);
+		
+		Cart cart1 = cartRepository.save(cart);
+		productQuantities.forEach(p ->
+			p.setCart(cart1)
+		);
+		productQuantityService.saveAll(productQuantities);
 		logger.info("Cart added successfully");
 		return new ResponseDto(201l, Arrays.asList("Cart saved successfully"));
 	}

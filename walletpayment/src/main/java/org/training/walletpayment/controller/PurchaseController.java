@@ -24,7 +24,7 @@ public class PurchaseController {
 	
 	@PostMapping("/purchases")
 	public ResponseEntity<ResponseDto> purchase(@RequestHeader int userId,@Valid @RequestBody PurchaseDto purchaseDto){
-		return new ResponseEntity<ResponseDto>(service.purchase(userId ,purchaseDto), HttpStatus.OK);
+		return new ResponseEntity<>(service.purchase(userId ,purchaseDto), HttpStatus.OK);
 	}
 
 

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import lombok.Data;
 
@@ -19,4 +21,8 @@ public class Wallet {
 	private LocalDate validFromDate;
 
 	private LocalDate validTill;
+	
+	@ManyToOne
+	@JoinColumn(name = "userId")
+	private User user;
 }

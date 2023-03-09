@@ -27,6 +27,7 @@ import org.training.walletpayment.exception.QuantityExceededException;
 import org.training.walletpayment.exception.WalletExpired;
 import org.training.walletpayment.repository.PurchaseRepository;
 import org.training.walletpayment.service.CartService;
+import org.training.walletpayment.service.ProductQuantityService;
 import org.training.walletpayment.service.ProductService;
 import org.training.walletpayment.service.PurchaseService;
 import org.training.walletpayment.service.UserService;
@@ -48,20 +49,23 @@ public class PurchaseServiceImpl implements PurchaseService {
 	private ProductService productService;
 
 	@Autowired
+	private ProductQuantityService productQuantityService;
+	
+	@Autowired
 	private PurchaseRepository repository;
 
 	@Override
 	public ResponseDto purchase(int userId, @Valid PurchaseDto purchaseDto) {
 
-		Wallet wallet = walletService.findByWalletId(purchaseDto.getWalletId()).orElseThrow(
-				() -> new NoSuchWalletExists("Wallet with wallet Id:" + purchaseDto.getWalletId() + "does not exists"));
+		User user = userService.findByUserId(userId)
+				.orElseThrow(() -> new NoSuchUserExists("User with user id:" + userId + " dose not exists"));
+
+		Wallet wallet = walletService.findByWalletId(purchaseDto.getWalletId(), user).orElseThrow(
+				() -> new NoSuchWalletExists("User with user Id: "+userId+" does not have a Wallet with wallet Id: " + purchaseDto.getWalletId()));
 
 		if (wallet.getValidTill().isBefore(LocalDate.now())) {
 			throw new WalletExpired("Wallet with wallet ID:" + purchaseDto.getWalletId() + " has expired");
 		}
-
-		User user = userService.findUserByUserIdAndWallets(userId, wallet).orElseThrow(() -> new NoSuchUserExists(
-				"User with user Id:" + userId + " does have any wallet with wallet Id" + purchaseDto.getWalletId()));
 
 		Cart cart = cartService.findCartByCartIdAndAndUser(purchaseDto.getCartId(), user)
 				.orElseThrow(() -> new NoSuchCartExists("Cart with cart Id:" + purchaseDto.getCartId()
@@ -74,7 +78,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 				.collect(Collectors.toMap(Product::getProductId, Function.identity()));
 		List<Product> productList = new ArrayList<>();
 		List<Double> prices = new ArrayList<>();
-		cart.getProductQuantities().forEach(p -> {
+		productQuantityService.findByCart(cart).forEach(p -> {
 			Product product = productMap.get(p.getProductId());
 			if (p.getQuantity() > product.getAvaliableQuantity()) {
 				throw new QuantityExceededException("Product with product Id:" + p.getProductId() + " has only "
