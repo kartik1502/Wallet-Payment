@@ -8,6 +8,4 @@ public interface UserService {
 
 	Optional<User> findByUserId(int userId);
 
-	
-
 }

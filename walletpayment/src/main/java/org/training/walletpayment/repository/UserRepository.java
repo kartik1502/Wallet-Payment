@@ -5,5 +5,4 @@ import org.training.walletpayment.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    
 }

@@ -16,12 +16,11 @@ public class Cart {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int cartId;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "userId")
 	private User user;
-	
+
 	private double totalPrice;
-	
-	
+
 }

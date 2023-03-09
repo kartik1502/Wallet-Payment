@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.training.walletpayment.entity.User;
 import org.training.walletpayment.repository.UserRepository;
@@ -25,19 +24,16 @@ class UserServiceImplTest {
 	private UserServiceImpl userService;
 
 	@Test
-	void testFindByuserId() {
+	void testFindByUserId() {
 
-		User user = new User();
-		user.setUserId(1);
-		user.setFirstName("divya");
-		user.setLastName("shree");
-		user.setEmailId("divya@gmail.com");
-		when(userRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(user));
+		User expectedUser = new User();
+		expectedUser.setUserId(1);
+		when(userRepository.findById(1)).thenReturn(Optional.of(expectedUser));
 
-		Optional<User> result = userService.findByUserId(1);
+		Optional<User> actualUser = userService.findByUserId(1);
 
-		assertTrue(result.isPresent());
-		assertEquals(user, result.get());
+		assertTrue(actualUser.isPresent());
+		assertEquals(expectedUser, actualUser.get());
 	}
 
 }

@@ -17,23 +17,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProductQuantity {
 
-	public ProductQuantity(int productId, int quantity) {
-		this.productId=productId;
-		this.quantity=quantity;
-		
-	}
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int productQuantityId;
-	
+
 	private int productId;
-	
+
 	private int quantity;
 
 	@ManyToOne
-	@JoinColumn(name="cartId")
+	@JoinColumn(name = "cartId")
 	private Cart cart;
-	
-	
+
+	public ProductQuantity(int productId, int quantity) {
+		super();
+		this.productId = productId;
+		this.quantity = quantity;
+	}
 }

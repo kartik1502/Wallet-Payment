@@ -17,8 +17,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-			HttpHeaders headers, HttpStatus status, WebRequest request) {
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(
+			MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
 		List<String> errors = new ArrayList<>();
 		for (ObjectError error : ex.getBindingResult().getAllErrors()) {
@@ -28,15 +28,51 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(UserNotFoundException.class)
-	public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
+	@ExceptionHandler(NoSuchCartExists.class)
+	public ResponseEntity<Object> handleNoSuchCartExistsException(NoSuchCartExists ex, WebRequest request){
+
 		List<String> errorMessage = new ArrayList<>();
 		errorMessage.add(ex.getLocalizedMessage());
 		return new ResponseEntity<>(new ErrorResponse(404l, errorMessage), HttpStatus.NOT_FOUND);
 	}
 
+	@ExceptionHandler(NoSuchUserExists.class)
+	public ResponseEntity<Object> handleNoSuchUserExistsException(NoSuchUserExists ex, WebRequest request){
+		List<String> errorMessage = new ArrayList<>();
+		errorMessage.add(ex.getLocalizedMessage());
+		return new ResponseEntity<>(new ErrorResponse(404l, errorMessage), HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(InSufficientBalance.class)
+	public ResponseEntity<Object> handleInsufficientBalanceException(InSufficientBalance ex, WebRequest request){
+		List<String> errorMessage = new ArrayList<>();
+		errorMessage.add(ex.getLocalizedMessage());
+		return new ResponseEntity<>(new ErrorResponse(404l, errorMessage), HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(NoSuchWalletExists.class)
+	public ResponseEntity<Object> handleNoSuchWalletExistsException(NoSuchWalletExists ex, WebRequest request){
+		List<String> errorMessage = new ArrayList<>();
+		errorMessage.add(ex.getLocalizedMessage());
+		return new ResponseEntity<>(new ErrorResponse(404l, errorMessage), HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(QuantityExceededException.class)
+	public ResponseEntity<Object> handleQuantityExceededException(QuantityExceededException ex, WebRequest request){
+		List<String> errorMessage = new ArrayList<>();
+		errorMessage.add(ex.getLocalizedMessage());
+		return new ResponseEntity<>(new ErrorResponse(404l, errorMessage), HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(WalletExpired.class)
+	public ResponseEntity<Object> handleWalletExpiredException(WalletExpired ex, WebRequest request){
+		List<String> errorMessage = new ArrayList<>();
+		errorMessage.add(ex.getLocalizedMessage());
+		return new ResponseEntity<>(new ErrorResponse(404l, errorMessage), HttpStatus.NOT_FOUND);
+	}
+	
 	@ExceptionHandler(ProductNotFoundException.class)
-	public ResponseEntity<Object> handleProductNotFoundException(ProductNotFoundException ex, WebRequest request) {
+	public ResponseEntity<Object> handleProductNotFoundException(ProductNotFoundException ex, WebRequest request){
 		List<String> errorMessage = new ArrayList<>();
 		errorMessage.add(ex.getLocalizedMessage());
 		return new ResponseEntity<>(new ErrorResponse(404l, errorMessage), HttpStatus.NOT_FOUND);
