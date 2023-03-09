@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -40,8 +41,9 @@ class ProductServiceImplTest {
 		productList.add(product);
 
 		Pageable pageable = PageRequest.of(page, pagesize);
-		when(productRepository.findByProductNameContainingIgnoreCase(productName, pageable)).thenReturn(productList);
-
+		when(productRepository.findByProductNameContainingIgnoreCase(productName, pageable)).thenReturn(new PageImpl<>(productList));
+		when(productRepository.findByProductNameContainingIgnoreCase(productName)).thenReturn(productList);
+		
 		List<ProductDto> productDtoList = productService.findByProductNameContaining(productName, page, pagesize);
 
 		assertEquals(1, productDtoList.size());
@@ -56,7 +58,7 @@ class ProductServiceImplTest {
 
 		Pageable pageable = PageRequest.of(page, pagesize);
 		when(productRepository.findByProductNameContainingIgnoreCase(productName, pageable))
-				.thenReturn(new ArrayList<>());
+				.thenReturn(new PageImpl<>(new ArrayList<>()));
 
 		ProductNotFoundException exception = org.junit.jupiter.api.Assertions.assertThrows(
 				ProductNotFoundException.class,
