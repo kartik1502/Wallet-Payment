@@ -177,7 +177,7 @@ class PurchaseServiceImplTest {
 
 		ResponseDto response = purchaseService.purchase(userId, purchaseDto);
 
-		assertEquals(200, response.getReaponseCode());
+		assertEquals(200, response.getResponseCode());
 		assertEquals("Purchase Done Successfully", response.getResponseMessage().get(0));
 
 	}

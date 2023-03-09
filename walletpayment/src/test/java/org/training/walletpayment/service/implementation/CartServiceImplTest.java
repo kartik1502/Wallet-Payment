@@ -72,7 +72,7 @@ class CartServiceImplTest {
 
 		ResponseDto responseDto = cartService.save(userId, productQuantityDtos);
 
-		assertEquals(201l, responseDto.getReaponseCode());
+		assertEquals(201l, responseDto.getResponseCode());
 		assertEquals("Cart saved successfully", responseDto.getResponseMessage().get(0));
 	}
 

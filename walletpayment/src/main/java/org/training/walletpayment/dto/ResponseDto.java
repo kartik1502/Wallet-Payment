@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseDto {
 
-	private long reaponseCode;
+	private long responseCode;
 	
 	private List<String> responseMessage;
 }

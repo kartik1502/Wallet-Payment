@@ -9,7 +9,6 @@ public interface ProductQuantityService {
 
 	void saveAll(List<ProductQuantity> productQuantities);
 
-
 	List<ProductQuantity> findByCart(Cart cart);
 
 }

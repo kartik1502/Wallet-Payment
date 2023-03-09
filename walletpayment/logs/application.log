@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2023-03-09 09:38:48.331  INFO 15404 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
 2023-03-09 09:38:48.339  INFO 15404 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
 2023-03-09 09:38:49.836  INFO 15404 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
@@ -3532,3 +3533,5 @@ Caused by: java.lang.ClassNotFoundException: org.training.walletpayment.entity.P
 	at java.base/sun.reflect.generics.factory.CoreReflectionFactory.makeNamedType(CoreReflectionFactory.java:114) ~[na:na]
 	... 45 common frames omitted
 
+=======
+>>>>>>> main

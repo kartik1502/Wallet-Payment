@@ -23,6 +23,6 @@ public class Wallet {
 	private LocalDate validTill;
 	
 	@ManyToOne
-	@JoinColumn(name = "userId")
+	@JoinColumn(name="userId")
 	private User user;
 }

@@ -30,7 +30,7 @@ class PurchaseControllerTest {
 		purchaseDto.setCartId(1);
 		purchaseDto.setWalletId(1000);
 		ResponseDto responseDto = new ResponseDto();
-		responseDto.setReaponseCode(200l);
+		responseDto.setResponseCode(200l);
 		when(purchaseService.purchase(userId, purchaseDto)).thenReturn(responseDto);
 
 		ResponseEntity<ResponseDto> responseEntity = purchaseController.purchase(userId, purchaseDto);

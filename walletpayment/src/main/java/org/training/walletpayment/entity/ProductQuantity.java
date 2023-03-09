@@ -34,5 +34,4 @@ public class ProductQuantity {
 		this.productId = productId;
 		this.quantity = quantity;
 	}
-
 }
