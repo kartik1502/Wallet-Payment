@@ -53,12 +53,6 @@ public class ProductServiceImpl implements ProductService {
 			logger.error("No such Product exists exception handled");
 			throw new ProductNotFoundException("No Such Product found in this page");
 		}
-
-		
-		if (dtos.isEmpty()) {
-			logger.error("No such products found");
-			throw new ProductNotFoundException("Product with product name doesn't exists");
-		}
 		return dtos;
 	}
 	
