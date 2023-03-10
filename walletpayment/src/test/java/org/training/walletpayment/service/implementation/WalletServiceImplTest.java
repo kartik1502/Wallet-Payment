@@ -1,6 +1,7 @@
 package org.training.walletpayment.service.implementation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -34,5 +35,21 @@ class WalletServiceImplTest {
 		Optional<Wallet> result = service.findByWalletId(walletId, user);
 
 		assertEquals(wallet, result.get());
+	}
+
+	@Test
+	void testSave() {
+
+		Wallet wallet = new Wallet();
+		wallet.setWalletId(1L);
+		wallet.setBalance(100.00);
+
+		when(repository.save(wallet)).thenReturn(wallet);
+
+		service.save(wallet);
+
+		assertNotNull(wallet);
+		assertEquals(1L, wallet.getWalletId());
+		assertEquals(100.00, wallet.getBalance());
 	}
 }
