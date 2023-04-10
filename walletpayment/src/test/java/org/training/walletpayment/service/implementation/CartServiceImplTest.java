@@ -91,7 +91,7 @@ class CartServiceImplTest {
 			cartService.save(userId, productQuantityDtos);
 		});
 
-		assertEquals("User with user Id:1 does not exists", exception.getErrorMessage());
+		assertEquals("User with user Id: 1 does not exists", exception.getErrorMessage());
 	}
 
 	@Test
@@ -117,7 +117,7 @@ class CartServiceImplTest {
 			cartService.save(userId, productQuantityDtos);
 		});
 
-		assertEquals("Product with product Id:1 does not exists", exception.getMessage());
+		assertEquals("Product with product Id: 1 does not exists", exception.getMessage());
 	}
 
 	@Test
