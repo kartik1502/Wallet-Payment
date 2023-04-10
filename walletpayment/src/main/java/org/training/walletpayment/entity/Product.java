@@ -11,16 +11,14 @@ import lombok.Data;
 @Data
 public class Product {
 
-	
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int productId;
-	
+
 	private String productName;
-	
+
 	private double price;
-	
+
 	private int avaliableQuantity;
 
 	public Product(int productId, String productName, double price) {
@@ -31,7 +29,7 @@ public class Product {
 	}
 
 	public Product() {
-		// TODO Auto-generated constructor stub
+
 	}
-	
+
 }
