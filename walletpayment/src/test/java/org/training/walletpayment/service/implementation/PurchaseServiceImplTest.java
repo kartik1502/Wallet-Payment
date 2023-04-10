@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.LockModeType;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,6 +26,7 @@ import org.training.walletpayment.entity.Product;
 import org.training.walletpayment.entity.ProductQuantity;
 import org.training.walletpayment.entity.User;
 import org.training.walletpayment.entity.Wallet;
+import org.training.walletpayment.exception.InSufficientBalance;
 import org.training.walletpayment.exception.NoSuchCartExists;
 import org.training.walletpayment.exception.NoSuchUserExists;
 import org.training.walletpayment.exception.NoSuchWalletExists;
@@ -135,7 +138,7 @@ class PurchaseServiceImplTest {
 	}
 
 	@Test
-	void testPurchase() {
+	void testPurchase() throws InterruptedException {
 
 		int userId = 1;
 		PurchaseDto purchaseDto = new PurchaseDto();
@@ -228,5 +231,52 @@ class PurchaseServiceImplTest {
 		});
 
 	}
+	
+	@Test
+	void testPurchaseInSufficientBalance() {
 
+		int userId = 1;
+		PurchaseDto purchaseDto = new PurchaseDto();
+		purchaseDto.setWalletId(1L);
+		purchaseDto.setCartId(1);
+
+		Cart cart = new Cart();
+		cart.setCartId(purchaseDto.getCartId());
+
+		User user = new User();
+		user.setUserId(userId);
+
+		Wallet wallet = new Wallet();
+		wallet.setWalletId(purchaseDto.getWalletId());
+		wallet.setBalance(1.0);
+		wallet.setValidTill(LocalDate.now().plusDays(1));
+
+		Product product1 = new Product();
+		product1.setProductId(1);
+		product1.setProductName("Product 1");
+		product1.setPrice(10.0);
+		product1.setAvaliableQuantity(20);
+
+		Product product2 = new Product();
+		product2.setProductId(2);
+		product2.setProductName("Product 2");
+		product2.setPrice(20.0);
+		product2.setAvaliableQuantity(15);
+
+		List<ProductQuantity> productQuantities = new ArrayList<>();
+		productQuantities.add(new ProductQuantity(1, 2));
+		productQuantities.add(new ProductQuantity(2, 1));
+
+		when(userService.findByUserId(userId)).thenReturn(Optional.of(user));
+		when(walletService.findByWalletId(purchaseDto.getWalletId(), user)).thenReturn(Optional.of(wallet));
+		when(cartService.findCartByCartIdAndAndUser(purchaseDto.getCartId(), user)).thenReturn(Optional.of(cart));
+		when(productService.getAllProducts()).thenReturn(Arrays.asList(product1, product2));
+		when(productQuantityService.findByCart(cart)).thenReturn(productQuantities);
+
+		assertThrows(InSufficientBalance.class, () -> {
+			purchaseService.purchase(userId, purchaseDto);
+		});
+
+	}
+	
 }

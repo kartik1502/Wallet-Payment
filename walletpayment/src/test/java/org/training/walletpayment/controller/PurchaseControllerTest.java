@@ -24,7 +24,7 @@ class PurchaseControllerTest {
 	private PurchaseService purchaseService;
 
 	@Test
-	void testPurchaseSuccess() {
+	void testPurchaseSuccess() throws InterruptedException {
 		int userId = 1;
 		PurchaseDto purchaseDto = new PurchaseDto();
 		purchaseDto.setCartId(1);

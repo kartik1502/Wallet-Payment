@@ -2,8 +2,12 @@ package org.training.walletpayment.service.implementation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +43,7 @@ class CartServiceImplTest {
 
 	@Mock
 	private CartRepository cartRepository;
-	
+
 	@Mock
 	private ProductQuantityService productQuantityService;
 
@@ -47,7 +51,7 @@ class CartServiceImplTest {
 	void testSaveWithValidData() {
 		int userId = 1;
 		List<ProductQuantityDto> productQuantityDtos = new ArrayList<>();
-		ProductQuantityDto productQuantityDto=new ProductQuantityDto();
+		ProductQuantityDto productQuantityDto = new ProductQuantityDto();
 		productQuantityDto.setProductId(1);
 		productQuantityDto.setQuantity(2);
 		productQuantityDtos.add(productQuantityDto);
@@ -60,7 +64,7 @@ class CartServiceImplTest {
 		Mockito.when(userService.findByUserId(userId)).thenReturn(Optional.of(user));
 
 		List<Product> products = new ArrayList<>();
-		Product product=new Product();
+		Product product = new Product();
 		product.setProductId(1);
 		product.setProductName("soap");
 		product.setPrice(10.0);
@@ -87,14 +91,14 @@ class CartServiceImplTest {
 			cartService.save(userId, productQuantityDtos);
 		});
 
-		assertEquals("User with user Id:1 does not exists", exception.getMessage());
+		assertEquals("User with user Id:1 does not exists", exception.getErrorMessage());
 	}
-	
+
 	@Test
 	void testSaveWithInvalidProduct() {
 		int userId = 1;
 		List<ProductQuantityDto> productQuantityDtos = new ArrayList<>();
-		ProductQuantityDto productQuantityDto=new ProductQuantityDto();
+		ProductQuantityDto productQuantityDto = new ProductQuantityDto();
 		productQuantityDto.setProductId(1);
 		productQuantityDto.setQuantity(2);
 		productQuantityDtos.add(productQuantityDto);
@@ -104,8 +108,6 @@ class CartServiceImplTest {
 		user.setFirstName("divya");
 		user.setLastName("shree");
 		user.setEmailId("divya@gmail.com");
-
-
 
 		Mockito.when(userService.findByUserId(userId)).thenReturn(Optional.of(user));
 
@@ -118,12 +120,28 @@ class CartServiceImplTest {
 		assertEquals("Product with product Id:1 does not exists", exception.getMessage());
 	}
 
+	@Test
+	void testSaveInvalidQuantity() {
+		when(userService.findByUserId(1)).thenReturn(Optional.of(new User()));
+		when(productService.getAllProducts()).thenReturn(Arrays.asList(new Product(1, "Product 1", 10.0)));
+		ResponseDto response = cartService.save(1, Arrays.asList(new ProductQuantityDto(1, 0)));
+		assertEquals(200, response.getResponseCode());
+		assertEquals(Arrays.asList("Quantity should be at least 1"), response.getResponseMessage());
+	}
+
+	@Test
+	void testSaveValid() {
+		User user = new User();
+		user.setUserId(1);
+		when(userService.findByUserId(1)).thenReturn(Optional.of(user));
+		List<Product> products = Arrays.asList(new Product(1, "Product 1", 10.0));
+		when(productService.getAllProducts()).thenReturn(products);
+		Cart cart = new Cart();
+		when(cartRepository.save(any(Cart.class))).thenReturn(cart);
+		List<ProductQuantityDto> productQuantityDtos = Arrays.asList(new ProductQuantityDto(1, 1));
+		cartService.save(1, productQuantityDtos);
+		verify(cartRepository).save(any(Cart.class));
+		verify(productQuantityService).saveAll(Mockito.anyList());
+	}
+
 }
-
-
-
-
-
-
-
-

@@ -27,6 +27,10 @@ import org.training.walletpayment.service.ProductQuantityService;
 import org.training.walletpayment.service.ProductService;
 import org.training.walletpayment.service.UserService;
 
+/**
+ * Implementation of CartService which provides methods for managing the
+ * Cart entities.
+ */
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -38,7 +42,7 @@ public class CartServiceImpl implements CartService {
 
 	@Autowired
 	private ProductService productService;
-	
+
 	@Autowired
 	private ProductQuantityService productQuantityService;
 
@@ -47,11 +51,26 @@ public class CartServiceImpl implements CartService {
 
 	Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
 
+	
 	@Override
 	public Optional<Cart> findCartByCartIdAndAndUser(int cartId, User user) {
 		return repository.findCartByCartIdAndAndUser(cartId, user);
 	}
 
+	/**
+	 * 
+	 * Saves the cart with the given list of products for the user with the given
+	 * userId.
+	 * 
+	 * @param userId             The user Id of the user for whom the cart needs to
+	 *                           be saved.
+	 * @param productquantitydto The list of products with their corresponding
+	 *                           quantities to be added to the cart.
+	 * @return ResponseDto The response containing the status code and the message.
+	 * @throws NoSuchUserExists         If no user exists with the given userId.
+	 * @throws ProductNotFoundException If any of the products in the list does not
+	 *                                  exist.
+	 */
 	@Override
 	public ResponseDto save(int userId, List<ProductQuantityDto> productquantitydto) {
 
@@ -59,11 +78,11 @@ public class CartServiceImpl implements CartService {
 		Optional<User> user = userService.findByUserId(userId);
 		if (user.isEmpty()) {
 			logger.error("No Such User Found Exception is thrown");
-			throw new NoSuchUserExists("User with user Id:" + userId + " does not exists");
+			throw new NoSuchUserExists(String.format("User with user Id: %d does not exists", userId));
 		}
 		Cart cart = new Cart();
 		cart.setUser(user.get());
-		
+
 		List<String> responses = new ArrayList<>();
 		Map<Integer, Product> productMap = productService.getAllProducts().stream()
 				.collect(Collectors.toMap(Product::getProductId, Function.identity()));
@@ -72,7 +91,7 @@ public class CartServiceImpl implements CartService {
 			Product product = productMap.get(p.getProductId());
 			if (Objects.isNull(product)) {
 				logger.error("No Such Product Found Exception is thrown");
-				throw new ProductNotFoundException("Product with product Id:" + p.getProductId() + " does not exists");
+				throw new ProductNotFoundException(String.format("Product with product Id: %d does not exists", p.getProductId()));
 			}
 			if (p.getQuantity() <= 0) {
 				responses.add("Quantity should be at least 1");
@@ -83,11 +102,9 @@ public class CartServiceImpl implements CartService {
 		if (!responses.isEmpty()) {
 			return new ResponseDto(200l, Arrays.asList("Quantity should be at least 1"));
 		}
-		
+
 		Cart cart1 = cartRepository.save(cart);
-		productQuantities.forEach(p ->
-			p.setCart(cart1)
-		);
+		productQuantities.forEach(p -> p.setCart(cart1));
 		productQuantityService.saveAll(productQuantities);
 		logger.info("Cart added successfully");
 		return new ResponseDto(201l, Arrays.asList("Cart saved successfully"));
